@@ -1,6 +1,5 @@
 package com.example.miniproject.service;
 
-import com.example.miniproject.dto.FileDto;
 import com.example.miniproject.dto.PostRequestDto;
 import com.example.miniproject.dto.PostResponseDto;
 import com.example.miniproject.entity.Files;
@@ -9,12 +8,8 @@ import com.example.miniproject.entity.User;
 import com.example.miniproject.entity.UserRoleEnum;
 import com.example.miniproject.exception.ApiException;
 import com.example.miniproject.exception.ExceptionEnum;
-import com.example.miniproject.jwt.JwtUtil;
-import com.example.miniproject.repository.CommentRepository;
 import com.example.miniproject.repository.FileRepostiory;
 import com.example.miniproject.repository.PostRepository;
-import io.jsonwebtoken.Jwts;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
