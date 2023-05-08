@@ -1,5 +1,6 @@
 package com.example.miniproject.entity;
 
+import com.example.miniproject.dto.FileDto;
 import com.example.miniproject.dto.PostRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -24,12 +25,6 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private String contents;
 
-//    @Column(nullable = false)
-//    private String filename;
-//
-//    @Column(nullable = false)
-//    private String filepath;
-
     @JsonIgnore
     @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,19 +34,18 @@ public class Post extends Timestamped {
     @OrderBy("createdDate DESC")
     private List<Comment> commentList = new ArrayList<>();
 
+
+
     public Post(PostRequestDto postRequestDto, User user) {
         this.title = postRequestDto.getTitle();
         this.contents = postRequestDto.getContents();
-//        this.filename = postRequestDto.getFilename();
-//        this.filepath = postRequestDto.getFilepath();
         this.user = user;
     }
 
     public void updatePost(PostRequestDto postRequestDto) {
         this.title = postRequestDto.getTitle();
         this.contents = postRequestDto.getContents();
-//        this.filename = postRequestDto.getFilename();
-//        this.filepath = postRequestDto.getFilepath();
+
     }
 
     public void addComment(Comment comment) {
@@ -60,11 +54,3 @@ public class Post extends Timestamped {
     }
 
 }
-
-
-
-//    @Column(nullable = false)
-//    private String filename;
-//
-//    @Column(nullable = false)
-//    private String filepath;

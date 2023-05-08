@@ -1,6 +1,5 @@
 package com.example.miniproject.service;
 
-import com.example.miniproject.dto.FileDto;
 import com.example.miniproject.dto.PostRequestDto;
 import com.example.miniproject.dto.PostResponseDto;
 import com.example.miniproject.entity.Files;
@@ -9,7 +8,6 @@ import com.example.miniproject.entity.User;
 import com.example.miniproject.entity.UserRoleEnum;
 import com.example.miniproject.exception.ApiException;
 import com.example.miniproject.exception.ExceptionEnum;
-import com.example.miniproject.repository.CommentRepository;
 import com.example.miniproject.repository.FileRepostiory;
 import com.example.miniproject.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -76,9 +74,14 @@ public class PostService {
     @Transactional(readOnly = true)
     //게시글 하나 조회
     public PostResponseDto getPost(Long postId) {
+
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_POST)
         );
+
+//        if (post.getUser().getUserid().equals(user.getUserid())){
+//            PostResponseDto postResponseDto = new PostResponseDto(true);
+//        }
         return new PostResponseDto(post);
     }
 

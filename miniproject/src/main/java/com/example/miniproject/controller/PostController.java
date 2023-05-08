@@ -4,7 +4,6 @@ import com.example.miniproject.dto.PostRequestDto;
 import com.example.miniproject.dto.PostResponseDto;
 import com.example.miniproject.security.UserDetailsImpl;
 import com.example.miniproject.service.PostService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +17,7 @@ public class PostController {
 
     // 게시물 작성 및 파일 업로드
     @PostMapping(value = "/api/posts")
-    public PostResponseDto writePost(PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) throws Exception {
+    public PostResponseDto writePost(PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws Exception {
        return postService.writePost(postRequestDto, userDetails.getUser());
     }
 

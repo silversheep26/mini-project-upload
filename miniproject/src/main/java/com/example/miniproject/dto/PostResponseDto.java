@@ -17,6 +17,8 @@ public class PostResponseDto {
     private LocalDateTime lastmodifiedDate;
     private List<CommentResponseDto> commentList;
 
+    private boolean matchUser;
+
     public PostResponseDto(Post post) {
         this.id = post.getId();
         this.userid = post.getUser().getUserid();
@@ -24,5 +26,9 @@ public class PostResponseDto {
         this.contents = post.getContents();
         this.lastmodifiedDate = post.getLastmodifiedDate();
         this.commentList = post.getCommentList().stream().map(CommentResponseDto::new).collect(Collectors.toList());
+    }
+
+    public PostResponseDto(boolean matchUser) {
+        this.matchUser = matchUser;
     }
 }
