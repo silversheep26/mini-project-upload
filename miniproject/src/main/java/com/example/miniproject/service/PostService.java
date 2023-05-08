@@ -9,9 +9,12 @@ import com.example.miniproject.entity.User;
 import com.example.miniproject.entity.UserRoleEnum;
 import com.example.miniproject.exception.ApiException;
 import com.example.miniproject.exception.ExceptionEnum;
+import com.example.miniproject.jwt.JwtUtil;
 import com.example.miniproject.repository.CommentRepository;
 import com.example.miniproject.repository.FileRepostiory;
 import com.example.miniproject.repository.PostRepository;
+import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -76,9 +79,14 @@ public class PostService {
     @Transactional(readOnly = true)
     //게시글 하나 조회
     public PostResponseDto getPost(Long postId) {
+
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_POST)
         );
+
+//        if (post.getUser().getUserid().equals(user.getUserid())){
+//            PostResponseDto postResponseDto = new PostResponseDto(true);
+//        }
         return new PostResponseDto(post);
     }
 

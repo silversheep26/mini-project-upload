@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class Files extends Timestamped {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "files_id")
@@ -24,9 +23,4 @@ public class Files extends Timestamped {
         this.filename = filename;
         this.orangfilename = orangfilename;
     }
-
-    //파일 수정
-//    public void fileupdate(){
-//
-//    }
 }

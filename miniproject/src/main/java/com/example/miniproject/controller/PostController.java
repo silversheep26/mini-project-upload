@@ -18,7 +18,7 @@ public class PostController {
 
     // 게시물 작성 및 파일 업로드
     @PostMapping(value = "/api/posts")
-    public PostResponseDto writePost(PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request) throws Exception {
+    public PostResponseDto writePost(PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws Exception {
        return postService.writePost(postRequestDto, userDetails.getUser());
     }
 
