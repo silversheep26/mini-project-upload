@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+//변경 by ym
+@CrossOrigin(origins="*")
 @RestController
 @RequiredArgsConstructor
 public class PostController {

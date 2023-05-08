@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+//변경 by ym
+@CrossOrigin(origins="*")
 @RestController
 @RequiredArgsConstructor
 public class CommentController {
