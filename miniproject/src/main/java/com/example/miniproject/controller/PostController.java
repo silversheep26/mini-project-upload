@@ -4,7 +4,6 @@ import com.example.miniproject.dto.PostRequestDto;
 import com.example.miniproject.dto.PostResponseDto;
 import com.example.miniproject.security.UserDetailsImpl;
 import com.example.miniproject.service.PostService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
