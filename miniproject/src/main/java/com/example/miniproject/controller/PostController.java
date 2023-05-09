@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 //변경 by ym
-@CrossOrigin(origins="*")
+@CrossOrigin(origins="*", exposedHeaders = "ACCESS_KEY")
 @RestController
 @RequiredArgsConstructor
 public class PostController {
