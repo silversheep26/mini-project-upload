@@ -39,14 +39,14 @@ public class UserService {
     public UserResponseDto singup(UserRequestDto userRequestDto){
         String userid = userRequestDto.getUserid();
         if(!userRequestDto.getPassword().matches("^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\\\(\\\\)\\-_=+]).{8,15}$")){ // 비밀번호 정규식 체크
-            return new UserResponseDto("비밀번호는 8~15자리, a-z, A-Z, 숫자, 특수문자 조합으로 구성되어야 합니다. ");
+            throw new ApiException(ExceptionEnum.PASSWAORD_REGEX);
         }
 
         String password = passwordEncoder.encode(userRequestDto.getPassword());
 
         // 중복된 아이디값 체크
         if(userRepository.findByUserid(userRequestDto.getUserid()).isPresent()){
-            return new UserResponseDto("중복된 회원이 존재합니다");
+            throw new ApiException(ExceptionEnum.DUPLICATED_USER_NAME);
         }
 
         //관리자 권한 체크

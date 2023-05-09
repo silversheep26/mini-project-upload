@@ -40,9 +40,9 @@ dependencies {
     //Redis
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.4.10'
 
+
     // aws s3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
-}
 
 ///////////////////////////////////////////////////////////////////////////
 

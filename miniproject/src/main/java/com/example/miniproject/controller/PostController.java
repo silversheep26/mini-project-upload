@@ -7,6 +7,7 @@ import com.example.miniproject.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,9 +19,9 @@ public class PostController {
     private final PostService postService;
 
     // 게시물 작성 및 파일 업로드
-    @PostMapping(value = "/api/posts")
-    public PostResponseDto writePost(PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) throws Exception {
-       return postService.writePost(postRequestDto, userDetails.getUser());
+    @PostMapping("/api/posts")
+    public PostResponseDto writePost(PostRequestDto postRequestDto, @RequestParam(value ="image", required=false) MultipartFile image, @AuthenticationPrincipal UserDetailsImpl userDetails) throws Exception {
+       return postService.writePost(postRequestDto, image, userDetails.getUser());
     }
 
     //게시물 전체 조회

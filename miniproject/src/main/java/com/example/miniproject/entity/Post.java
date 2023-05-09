@@ -1,9 +1,9 @@
 package com.example.miniproject.entity;
 
-import com.example.miniproject.dto.FileDto;
 import com.example.miniproject.dto.PostRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,6 +25,9 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private String contents;
 
+    @Column
+    private String imageUrl;
+
     @JsonIgnore
     @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,10 +38,11 @@ public class Post extends Timestamped {
     private List<Comment> commentList = new ArrayList<>();
 
 
-
-    public Post(PostRequestDto postRequestDto, User user) {
+    @Builder
+    public Post(PostRequestDto postRequestDto, String imageUrl, User user) {
         this.title = postRequestDto.getTitle();
         this.contents = postRequestDto.getContents();
+        this.imageUrl = imageUrl;
         this.user = user;
     }
 

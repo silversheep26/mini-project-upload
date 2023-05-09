@@ -34,7 +34,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
-public class WebSecurityConfig{
+
+public class WebSecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
     private final JwtUtil jwtUtil;
@@ -70,6 +71,7 @@ public class WebSecurityConfig{
                 .requestMatchers("/api/comments/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/read/**").permitAll()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+
                 // 어떤 요청이든 '인증'
                 .anyRequest().authenticated()
                 // JWT 인증/인가를 사용하기 위한 설정

@@ -13,5 +13,4 @@ import java.util.List;
 public class PostRequestDto {
     private String title;
     private String contents;
-    private List<MultipartFile> files;
 }

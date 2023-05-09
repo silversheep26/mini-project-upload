@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 public enum ExceptionEnum {
     // 400 Bad Request
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "400", "아이디 또는 비밀번호가 일치하지 않습니다."),
+    PASSWAORD_REGEX(HttpStatus.BAD_REQUEST, "400", "비밀번호는 8~15자리, a-z, A-Z, 숫자, 특수문자 조합으로 구성되어야 합니다."),
 
     // 401 Unauthorized
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "401", "권한이 없습니다."),
