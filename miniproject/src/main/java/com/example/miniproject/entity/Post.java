@@ -46,10 +46,10 @@ public class Post extends Timestamped {
         this.user = user;
     }
 
-    public void updatePost(PostRequestDto postRequestDto) {
+    public void updatePost(PostRequestDto postRequestDto, String imageUrl) {
         this.title = postRequestDto.getTitle();
         this.contents = postRequestDto.getContents();
-
+        this.imageUrl = imageUrl;
     }
 
     public void addComment(Comment comment) {
