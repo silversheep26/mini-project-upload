@@ -41,6 +41,22 @@ public class WebSecurityConfig {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
+
+    private static final String[] PERMIT_URL_ARRAY = {
+            /* swagger v2 */
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            /* swagger v3 */
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
+    };
+
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -50,7 +66,8 @@ public class WebSecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+                .and().ignoring().requestMatchers(PERMIT_URL_ARRAY);
     }
 
 
@@ -70,6 +87,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/api/posts/**").permitAll()
                 .requestMatchers("/api/comments/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/read/**").permitAll()
+                .requestMatchers(PERMIT_URL_ARRAY).permitAll()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
 
                 // 어떤 요청이든 '인증'

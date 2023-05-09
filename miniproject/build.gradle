@@ -40,6 +40,9 @@ dependencies {
     //Redis
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.4.10'
 
+    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0'
+    implementation group: 'io.springfox', name: 'springfox-swagger2', version: '3.0.0'
+
 
     // aws s3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
@@ -88,6 +91,7 @@ dependencies {
 //}
 ///////////////////////////////////////////////////////////////////////////
 
-tasks.named('test') {
-    useJUnitPlatform()
+    tasks.named('test') {
+        useJUnitPlatform()
+    }
 }
