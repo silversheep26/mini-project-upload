@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 //변경 by ym
-@CrossOrigin(origins="*")
+@CrossOrigin(origins="*", exposedHeaders = "ACCESS_KEY")
 @RestController
 @RequiredArgsConstructor
 public class UserController {
