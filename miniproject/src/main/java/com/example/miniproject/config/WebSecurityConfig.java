@@ -24,6 +24,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -33,18 +34,11 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
-public class WebSecurityConfig implements WebMvcConfigurer {
+public class WebSecurityConfig{
 
     private final JwtAuthFilter jwtAuthFilter;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
-
-    //변경 by ym
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://3.37.22.175:8080");
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -55,9 +49,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-                .requestMatchers(PathRequest.toH2Console());
-
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
 
@@ -71,16 +63,18 @@ public class WebSecurityConfig implements WebMvcConfigurer {
         http.authorizeRequests()
                 // login 없이 허용하는 페이지
 //                .requestMatchers("/api/posts/**").permitAll()
+                .requestMatchers("/**").permitAll()
                 .requestMatchers("/api/signup").permitAll()
                 .requestMatchers("/api/login").permitAll()
                 .requestMatchers("/api/posts/**").permitAll()
                 .requestMatchers("/api/comments/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/read/**").permitAll()
-                .requestMatchers("/h2-console/**").permitAll()
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 // 어떤 요청이든 '인증'
                 .anyRequest().authenticated()
                 // JWT 인증/인가를 사용하기 위한 설정
-                .and().addFilterBefore(new JwtAuthFilter(jwtUtil,userRepository), UsernamePasswordAuthenticationFilter.class);
+                .and().addFilterBefore(new JwtAuthFilter(jwtUtil,userRepository), UsernamePasswordAuthenticationFilter.class)
+                .cors();
 
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(jwtAuthFilter, ExceptionTranslationFilter.class);
