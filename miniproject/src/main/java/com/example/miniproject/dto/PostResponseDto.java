@@ -1,6 +1,7 @@
 package com.example.miniproject.dto;
 
 import com.example.miniproject.entity.Post;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
@@ -14,16 +15,19 @@ public class PostResponseDto {
     private String userid;
     private String title;
     private String contents;
+    private String imageUrl;
     private LocalDateTime lastmodifiedDate;
     private List<CommentResponseDto> commentList;
 
     private boolean matchUser;
 
+    @Builder
     public PostResponseDto(Post post) {
         this.id = post.getId();
         this.userid = post.getUser().getUserid();
         this.title = post.getTitle();
         this.contents = post.getContents();
+        this.imageUrl = post.getImageUrl();
         this.lastmodifiedDate = post.getLastmodifiedDate();
         this.commentList = post.getCommentList().stream().map(CommentResponseDto::new).collect(Collectors.toList());
     }

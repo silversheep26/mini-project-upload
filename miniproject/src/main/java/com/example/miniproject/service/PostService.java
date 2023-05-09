@@ -1,27 +1,30 @@
 package com.example.miniproject.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.miniproject.dto.PostRequestDto;
 import com.example.miniproject.dto.PostResponseDto;
-import com.example.miniproject.entity.Files;
 import com.example.miniproject.entity.Post;
 import com.example.miniproject.entity.User;
 import com.example.miniproject.entity.UserRoleEnum;
 import com.example.miniproject.exception.ApiException;
 import com.example.miniproject.exception.ExceptionEnum;
-import com.example.miniproject.repository.FileRepostiory;
 import com.example.miniproject.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,11 +32,14 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional
 public class PostService {
-    private final PostRepository postRepository;
-    private final FileRepostiory fileRepostiory;
 
-    @Value("${org.zerock.upload.path}")
-    private String uploadPath;
+    private final PostRepository postRepository;
+    private static final String S3_BUCKET_PREFIX = "S3";
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+    private final AmazonS3 amazonS3;
+    Post post;
 
     @Transactional(readOnly = true)
     // 게시글 전체 조회
@@ -43,31 +49,38 @@ public class PostService {
     }
 
     // 게시글 작성
-    public PostResponseDto writePost(PostRequestDto postRequestDto, User user){
+    public PostResponseDto writePost(PostRequestDto postRequestDto, MultipartFile image, User user) throws IOException {
         // 게시글 저장
-        Post post = postRepository.saveAndFlush(new Post(postRequestDto,user));
-       File file = new File(uploadPath);
+        // 파일명 새로 부여를 위한 현재 시간 알아내기
+        LocalDateTime now = LocalDateTime.now();
+        int hour = now.getHour();
+        int minute = now.getMinute();
+        int second = now.getSecond();
+        int millis = now.get(ChronoField.MILLI_OF_SECOND);
 
-        //경로에 폴더 있는지 확인
-       if(!file.exists()){
-           file.mkdirs(); //폴더 생성합니다.
-       }
+        String imageUrl = null;
 
-       // 받은 값에 파일 이름 추출 및 저장
-        if(postRequestDto.getFiles() != null){
-            postRequestDto.getFiles().forEach(multipartFile -> {
-                String originalName = multipartFile.getOriginalFilename();
-                String uuid = UUID.randomUUID().toString();
-                String serverfileName = uuid+"_"+originalName;
-                Path savepath = Paths.get(uploadPath, serverfileName);
-                fileRepostiory.saveAndFlush( new Files(originalName, serverfileName));
-                try{
-                    multipartFile.transferTo(savepath); //파일 저장
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            });
-        }
+        // 새로 부여한 이미지명
+        String newFileName = "image" + hour + minute + second + millis;
+        String fileExtension = '.' + image.getOriginalFilename().replaceAll("^.*\\.(.*)$", "$1");
+        String imageName =S3_BUCKET_PREFIX + newFileName + fileExtension;
+
+        // 메타데이터 설정
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentType(image.getContentType());
+        objectMetadata.setContentLength(image.getSize());
+
+        InputStream inputStream = image.getInputStream();
+
+        amazonS3.putObject(new PutObjectRequest(bucketName, imageName, inputStream, objectMetadata)
+                .withCannedAcl(CannedAccessControlList.PublicRead));
+        imageUrl = amazonS3.getUrl(bucketName, imageName).toString();
+        post = post.builder()
+                .postRequestDto(postRequestDto)
+                .imageUrl(imageUrl)
+                .user(user)
+                .build();
+        postRepository.saveAndFlush(post);
         return new PostResponseDto(post);
     }
 
@@ -78,10 +91,6 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_POST)
         );
-
-//        if (post.getUser().getUserid().equals(user.getUserid())){
-//            PostResponseDto postResponseDto = new PostResponseDto(true);
-//        }
         return new PostResponseDto(post);
     }
 

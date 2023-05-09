@@ -1,0 +1,9 @@
+
+f	java:S117%"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(σ®™σ
+k	java:S117&"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¨ι¬™ύÿÿÿÿ
+f
+java:S36551"PCall "Optional#isPresent()" or "!Optional#isEmpty()" before accessing the value.(ξΖεν
+K
+java:S2209%"5Change this instance-reference to a static reference.(σ®™σ
+P
+java:S2209&"5Change this instance-reference to a static reference.(¨ι¬™ύÿÿÿÿ
