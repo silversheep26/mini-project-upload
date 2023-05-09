@@ -39,7 +39,7 @@ public class PostService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
     private final AmazonS3 amazonS3;
-    Post post;
+
 
     @Transactional(readOnly = true)
     // 게시글 전체 조회
@@ -50,6 +50,7 @@ public class PostService {
 
     // 게시글 작성
     public PostResponseDto writePost(PostRequestDto postRequestDto, MultipartFile image, User user) throws IOException {
+        Post post = new Post();
         // 게시글 저장
         // 파일명 새로 부여를 위한 현재 시간 알아내기
         LocalDateTime now = LocalDateTime.now();
@@ -80,14 +81,14 @@ public class PostService {
                 .imageUrl(imageUrl)
                 .user(user)
                 .build();
-        postRepository.saveAndFlush(post);
+
+        post = postRepository.saveAndFlush(post);
         return new PostResponseDto(post);
     }
 
     @Transactional(readOnly = true)
     //게시글 하나 조회
     public PostResponseDto getPost(Long postId) {
-
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_POST)
         );
@@ -95,23 +96,48 @@ public class PostService {
     }
 
     // 게시물 수정
-    public PostResponseDto updatePost(Long postId, PostRequestDto postRequestDto, User user) {
-        Post post = postRepository.findById(postId).orElseThrow(
+    public PostResponseDto updatePost(Long postid, PostRequestDto postRequestDto, MultipartFile image, User user) throws IOException {
+        Post post = postRepository.findById(postid).orElseThrow(
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_POST)
         );
         if (user.getRole() != UserRoleEnum.ADMIN && !StringUtils.equals(post.getUser().getId(), user.getId())) {
             throw new ApiException(ExceptionEnum.UNAUTHORIZED);
         }
-        post.updatePost(postRequestDto);
+
+        // 폴더 생성과 파일명 새로 부여를 위한 현재 시간 알아내기
+        LocalDateTime now = LocalDateTime.now();
+        int hour = now.getHour();
+        int minute = now.getMinute();
+        int second = now.getSecond();
+        int millis = now.get(ChronoField.MILLI_OF_SECOND);
+
+        String imageUrl;
+
+        // 새로 부여한 이미지명
+        String newFileName = "image" + hour + minute + second + millis;
+        String fileExtension = '.' + image.getOriginalFilename().replaceAll("^.*\\.(.*)$", "$1");
+        String imageName =S3_BUCKET_PREFIX + newFileName + fileExtension;
+
+        // 메타데이터 설정
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentType(image.getContentType());
+        objectMetadata.setContentLength(image.getSize());
+
+        InputStream inputStream = image.getInputStream();
+
+        amazonS3.putObject(new PutObjectRequest(bucketName, imageName, inputStream, objectMetadata)
+                .withCannedAcl(CannedAccessControlList.PublicRead));
+        imageUrl = amazonS3.getUrl(bucketName, imageName).toString();
+
+        post.updatePost(postRequestDto, imageUrl);
         return new PostResponseDto(post);
     }
 
     // 게시물 삭제
-    public String deletePost(Long postId, User user){
+    public String deletePost(Long postId, User user) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new ApiException(ExceptionEnum.NOT_FOUND_POST)
         );
-
         if (user.getRole() != UserRoleEnum.ADMIN && !StringUtils.equals(post.getUser().getId(), user.getId())) {
             throw new ApiException(ExceptionEnum.UNAUTHORIZED);
         }

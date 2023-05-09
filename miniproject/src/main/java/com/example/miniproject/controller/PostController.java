@@ -11,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+
+
 //변경 by ym
 @CrossOrigin(origins="*", exposedHeaders = "ACCESS_KEY")
 @RestController
@@ -20,8 +22,10 @@ public class PostController {
 
     // 게시물 작성 및 파일 업로드
     @PostMapping("/api/posts")
-    public PostResponseDto writePost(PostRequestDto postRequestDto, @RequestParam(value ="image", required=false) MultipartFile image, @AuthenticationPrincipal UserDetailsImpl userDetails) throws Exception {
-       return postService.writePost(postRequestDto, image, userDetails.getUser());
+    public PostResponseDto writePost(PostRequestDto postRequestDto,
+                                     @RequestParam(value ="image", required=false) MultipartFile image,
+                                     @AuthenticationPrincipal UserDetailsImpl userDetails) throws Exception {
+        return postService.writePost(postRequestDto, image, userDetails.getUser());
     }
 
     //게시물 전체 조회
@@ -38,8 +42,11 @@ public class PostController {
 
     // 게시물 수정
     @PutMapping("/api/posts/{postId}")
-    public PostResponseDto updatePost(@PathVariable Long postId, @RequestBody PostRequestDto postrequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return postService.updatePost(postId, postrequestDto, userDetails.getUser());
+    public PostResponseDto updatePost(@PathVariable Long postId,
+                                      PostRequestDto postrequestDto,
+                                      @RequestParam(value ="image", required=false) MultipartFile image,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails) throws Exception{
+        return postService.updatePost(postId, postrequestDto, image, userDetails.getUser());
     }
 
     // 게시물 삭제
