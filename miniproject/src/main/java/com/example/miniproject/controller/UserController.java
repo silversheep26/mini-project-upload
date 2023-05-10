@@ -8,10 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 //변경 by ym
 @CrossOrigin(origins="*", exposedHeaders = "ACCESS_KEY")
@@ -38,5 +35,9 @@ public class UserController {
         return userService.logout(userDetails.getUser(), request);
     }
 
-
+    //유저 아이디 반환
+    @GetMapping("/api/user-info")
+    public String getUserName(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return userDetails.getUsername();
+    }
 }
