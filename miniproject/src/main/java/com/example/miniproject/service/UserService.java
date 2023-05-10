@@ -13,6 +13,7 @@ import com.example.miniproject.redis.RedisUtil;
 import com.example.miniproject.repository.BlackListRepository;
 import com.example.miniproject.repository.RefreshTokenRepository;
 import com.example.miniproject.repository.UserRepository;
+import io.sentry.spring.tracing.SentrySpan;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ public class UserService {
 
 
     // 회원가입
+    @SentrySpan
     public UserResponseDto singup(UserRequestDto userRequestDto){
         String userid = userRequestDto.getUserid();
         if(!userRequestDto.getPassword().matches("^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\\\(\\\\)\\-_=+]).{8,15}$")){ // 비밀번호 정규식 체크
