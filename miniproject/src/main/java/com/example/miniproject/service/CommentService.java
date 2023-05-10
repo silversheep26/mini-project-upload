@@ -27,7 +27,7 @@ public class CommentService {
         );
 
         Comment comment = new Comment(commentRequestDto, user, post);
-        post.addComment(comment);
+        comment.setPost(post);
         comment.setUser(user);
 
         commentRepository.saveAndFlush(comment);
