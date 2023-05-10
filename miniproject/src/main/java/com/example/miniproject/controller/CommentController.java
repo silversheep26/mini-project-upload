@@ -32,5 +32,4 @@ public class CommentController {
     public String deleteComment(@PathVariable Long postId, @PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.deleteComment(commentId, userDetails.getUser());
     }
-
 }
