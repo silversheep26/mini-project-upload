@@ -1,5 +1,6 @@
 package com.example.miniproject.service;
 
+import com.example.miniproject.config.SentrySupport;
 import com.example.miniproject.dto.TokenDto;
 import com.example.miniproject.dto.UserRequestDto;
 import com.example.miniproject.dto.UserResponseDto;
@@ -13,7 +14,6 @@ import com.example.miniproject.redis.RedisUtil;
 import com.example.miniproject.repository.BlackListRepository;
 import com.example.miniproject.repository.RefreshTokenRepository;
 import com.example.miniproject.repository.UserRepository;
-import io.sentry.spring.tracing.SentrySpan;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -34,13 +34,15 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
+    private final SentrySupport sentrySupport;
 
 
     // 회원가입
-    @SentrySpan
     public UserResponseDto singup(UserRequestDto userRequestDto){
+
         String userid = userRequestDto.getUserid();
         if(!userRequestDto.getPassword().matches("^(?=.*[a-zA-z])(?=.*[0-9])(?=.*[$`~!@$!%*#^?&\\\\(\\\\)\\-_=+]).{8,15}$")){ // 비밀번호 정규식 체크
+            sentrySupport.logSimpleMessage((ExceptionEnum.PASSWAORD_REGEX).getMessage());
             throw new ApiException(ExceptionEnum.PASSWAORD_REGEX);
         }
 
@@ -48,6 +50,7 @@ public class UserService {
 
         // 중복된 아이디값 체크
         if(userRepository.findByUserid(userRequestDto.getUserid()).isPresent()){
+            sentrySupport.logSimpleMessage((ExceptionEnum.DUPLICATED_USER_NAME).getMessage());
             throw new ApiException(ExceptionEnum.DUPLICATED_USER_NAME);
         }
 
@@ -70,11 +73,14 @@ public class UserService {
         // 사용자 확인
         Optional<User> user = userRepository.findByUserid(userId);
         if(user.isEmpty()){
+            sentrySupport.logSimpleMessage((ExceptionEnum.BAD_REQUEST).getMessage());
             throw new ApiException(ExceptionEnum.BAD_REQUEST);
         }
 
         // 비밀번호 확인
         if(!passwordEncoder.matches(password, user.get().getPassword())){
+
+            sentrySupport.logSimpleMessage((ExceptionEnum.BAD_REQUEST).getMessage());
             throw new ApiException(ExceptionEnum.BAD_REQUEST);
         }
 
