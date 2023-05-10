@@ -12,7 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .exposedHeaders("ACCESS_KEY")
                 .allowedOriginPatterns("*")
-                .allowedMethods("GET", "POST"); // 허용할 HTTP method
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS"); // 허용할 HTTP method
     }
 
     @Override

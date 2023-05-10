@@ -34,7 +34,6 @@ public class Post extends Timestamped {
     private User user;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
-    @OrderBy("createdDate DESC")
     private List<Comment> commentList = new ArrayList<>();
 
 
@@ -52,9 +51,9 @@ public class Post extends Timestamped {
         this.imageUrl = imageUrl;
     }
 
-    public void addComment(Comment comment) {
-        commentList.add(comment);
-        comment.setPost(this);
-    }
+//    public void addComment(Comment comment) {
+//        commentList.add(comment);
+//        comment.setPost(this);
+//    }
 
 }
